@@ -1,3 +1,19 @@
+import FirebaseApp from "firebase/app";
+import express from "express"
+
+const PORT = process.env.PORT || 3001;
+
+const app = express();
+
+app.get("/api", (req, res) => {
+  res.json({ message: "Hello from server!" });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server listening on ${PORT}`);
+});
+ app.put
+
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -11,7 +27,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-//const data = getDatabase(app);
+const application = initializeApp(firebaseConfig);
+//const data = getDatabase(application);
 
 //firebase.push(firebase.ref(data), "Hello")
