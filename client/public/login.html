@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<meta name="author" content="SE 300 Group Calendar">
+	<link rel="shortcut icon" href="images/erau_logo.svg">
+
+	<meta name="description" content="" />
+	<meta name="keywords" content="bootstrap, bootstrap5" />
+	
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="fonts/icomoon/style.css">
+	<link rel="stylesheet" href="fonts/feather/style.css">
+
+	<link rel="stylesheet" href="css/tiny-slider.css">
+	<link rel="stylesheet" href="css/aos.css">
+	<link rel="stylesheet" href="css/glightbox.min.css">
+	<link rel="stylesheet" href="css/style.css">
+
+	<title>SE 300 Group Calendar</title>
+
+	<script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+    <script src="server/index.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://www.gstatic.com/firebasejs/ui/6.1.0/firebase-ui-auth.css" />
+    <script type="module">
+		// FirebaseUI config.
+     	var uiConfig = {
+        signInSuccessUrl: '<url-to-redirect-to-on-success>',
+        signInOptions: [
+			// Leave the lines as is for the providers you want to offer your users.
+			firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+			firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+			firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+			//firebase.auth.GithubAuthProvider.PROVIDER_ID,
+			firebase.auth.EmailAuthProvider.PROVIDER_ID,
+			//firebase.auth.PhoneAuthProvider.PROVIDER_ID,
+			firebaseui.auth.AnonymousAuthProvider.PROVIDER_ID
+        ],
+        // tosUrl and privacyPolicyUrl accept either url string or a callback
+        // function.
+        // Terms of service url/callback.
+        tosUrl: '<your-tos-url>',
+        // Privacy policy url/callback.
+        privacyPolicyUrl: function() {
+    		window.location.assign('<your-privacy-policy-url>');
+        }
+      };
+
+      	// Initialize the FirebaseUI Widget using Firebase.
+      	var ui = new firebaseui.auth.AuthUI(firebase.auth(app));
+      	// The start method will wait until the DOM is loaded.
+      	ui.start('#firebaseui-auth-container', uiConfig);
+
+		document.getElementById("showButton").addEventListener("click", function() {
+		var container = document.getElementById("firebaseui-auth-container");
+			if (container.style.display === "none") {
+				container.style.display = "block";
+			} else {
+				container.style.display = "none";
+			}
+		});
+	</script>
+</head>
+<body>
+
+	<div class="site-mobile-menu site-navbar-target">
+		<div class="site-mobile-menu-header">
+			<div class="site-mobile-menu-close">
+				<span class="icofont-close js-menu-toggle"></span>
+			</div>
+		</div>
+		<div class="site-mobile-menu-body"></div>
+	</div>
+
+    
+	<nav class="site-nav">
+		<div class="container">
+			<div class="site-navigation">
+				<a href="index.html" class="logo m-0">SE 300 Group Calendar</a>
+				<ul class="js-clone-nav d-none d-lg-inline-block text-start site-menu float-end">
+					<li><a href="index.html">Home</a></li>
+					<li><a href="about.html">About</a></li>
+					<li><a href="events.html">Events</a></li>
+					<li><a href="contact.html">Contact</a></li>
+					<li class="active"><a href ="login.html">Login</a></li>
+				</ul>
+				<a href="#" class="burger ms-auto float-end site-menu-toggle mt-2 js-menu-toggle d-inline-block d-lg-none light" data-toggle="collapse" data-target="#main-navbar">
+					<span></span>
+				</a>
+			</div>
+		</div>
+	</nav>
+
+
+	<div class="hero v-h-full overlay">
+		<div class="img-bg rellax">
+			<img src="images/erau_logo.svg" alt="Image" class="img-fluid">
+		</div>
+		<div class="container">
+			<div class="row align-items-center v-h-full">
+				<div class="col-lg-7 col-xxl-6 mx-auto text-center">
+					<h1 class="heading-2 text-white mb-3" data-aos="fade-up">Login</h1>
+					<p data-aos="fade-up" data-aos-delay="200" class="text-white lead mb-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis quis molestiae vitae eligendi at.</p>
+					<p data-aos="fade-up" data-aos-delay="300"><a href="#" class="btn btn-primary-outline white me-4" id ="showButton">Please make an account</a></p>
+					<div id="firebaseui-auth-container" style = "display: none"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-4 pe-lg-5" data-aos="fade-up">
+					<span class="subheading d-inline-block mb-2">Placeholder</span>
+					<h2 class="mb-4">An Outstanding Program</h2>
+					<p class="mb-5">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</p>
+					<p><a href="#" class="btn btn-black">Get started</a></p>
+				</div>
+				<div class="col-lg-8">
+					<div class="row">
+						<div class="col-6 col-lg-6 mt-5" data-aos="fade-up" data-aos-delay="100">
+							<img src="images/erau_logo.svg" alt="Image" class="img-fluid rounded">
+						</div>
+						<div class="col-6 col-lg-6" data-aos="fade-up" data-aos-delay="200">
+							<img src="images/erau_logo.svg" alt="Image" class="img-fluid rounded">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="site-footer">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-4">
+					<div class="widget">
+						<h3>Contact</h3>
+						<address>43 Raymouth Rd. Baltemoer, London 3910</address>
+						<ul class="list-unstyled links">
+							<li><a href="tel://11234567890">+1(123)-456-7890</a></li>
+							<li><a href="tel://11234567890">+1(123)-456-7890</a></li>
+							<li><a href="mailto:info@mydomain.com">info@mydomain.com</a></li>
+						</ul>
+					</div> <!-- /.widget -->
+				</div> <!-- /.col-lg-4 -->
+				<div class="col-lg-4">
+					<div class="widget">
+						<h3>Sources</h3>
+						<ul class="list-unstyled float-start links">
+							<li><a href="about.html">About us</a></li>
+							<li><a href="#">Placeholder</a></li>
+							<li><a href="#">Placeholder</a></li>
+							<li><a href="#">Placeholder</a></li>
+							<li><a href="#">Placeholder</a></li>
+							<li><a href="#">Placeholder</a></li>
+						</ul>
+						<ul class="list-unstyled float-start links">
+							<li><a href="#">Placeholder</a></li>
+							<li><a href="#">Placeholder</a></li>
+							<li><a href="#">Placeholder</a></li>
+							<li><a href="#">Placeholder</a></li>
+							<li><a href="#">Placeholder</a></li>
+							<li><a href="#">Placeholder</a></li>
+						</ul>
+					</div> <!-- /.widget -->
+				</div> <!-- /.col-lg-4 -->
+				<div class="col-lg-4">
+					<div class="widget">
+						<h3>Links</h3>
+						<ul class="list-unstyled links">
+							<li><a href="#">Our Vision</a></li>
+							<li><a href="about.html">About us</a></li>
+							<li><a href="contact.html">Contact us</a></li>
+						</ul>
+						<ul class="list-unstyled social">
+							<li><a href="#"><span class="icon-instagram"></span></a></li>
+							<li><a href="#"><span class="icon-twitter"></span></a></li>
+							<li><a href="#"><span class="icon-facebook"></span></a></li>
+							<li><a href="#"><span class="icon-linkedin"></span></a></li>
+							<li><a href="#"><span class="icon-pinterest"></span></a></li>
+							<li><a href="#"><span class="icon-dribbble"></span></a></li>
+						</ul>
+					</div> <!-- /.widget -->
+				</div> <!-- /.col-lg-4 -->
+			</div> <!-- /.row -->
+			<div class="row mt-5">
+				<div class="col-12 text-center">
+					<p class="mb-0">Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash; Designed by Embry-Riddle Aeronautical Students</p>
+				</div>
+			</div>
+		</div> <!-- /.container -->
+	</div> <!-- /.site-footer -->
+
+
+	<!-- Preloader -->
+	<div id="overlayer"></div>
+	<div class="loader">
+		<div class="spinner-border" role="status">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
+	
+
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/tiny-slider.js"></script>
+	<script src="js/aos.js"></script>
+	<script src="js/navbar.js"></script>
+	<script src="js/glightbox.min.js"></script>
+	<script src="js/rellax.min.js"></script>
+	<script src="js/custom.js"></script>
+</body>
+</html>
