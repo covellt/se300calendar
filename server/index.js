@@ -30,5 +30,4 @@ const firebaseConfig = {
 // Initialize Firebase
 const application = FirebaseApp.initializeApp(firebaseConfig);
 const data = Database.getDatabase(application);
-
 //firebase.push(firebase.ref(data), "Hello")
