@@ -1,4 +1,4 @@
-import FirebaseApp from "firebase/app";
+import * as Firebaseapp from "@firebase/app";
 import express from "express"
 
 const PORT = process.env.PORT || 3001;
@@ -27,7 +27,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const application = initializeApp(firebaseConfig);
+const application = Firebaseapp.initializeApp(firebaseConfig);
 //const data = getDatabase(application);
 
 //firebase.push(firebase.ref(data), "Hello")
