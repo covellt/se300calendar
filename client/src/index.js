@@ -4,7 +4,7 @@ import './index.css';
 import App from './App.js';
 import reportWebVitals from './reportWebVitals.js';
 import SignInScreen from './ui.js';
-import { Calendar } from './cal.js';
+import Calendar from './cal.js';
 import Fileinput from './fileinput.js';
 
 console.log("Hello world");
@@ -15,9 +15,9 @@ console.log("Hello world");
 //   </React.StrictMode>
 // );
 
-const loginButton = ReactDOM.createRoot(document.getElementById('firebaseui-auth-container'));
+const loginButton = ReactDOM.createRoot(document.getElementById('mainbox'));
 loginButton.render(
-  <Fileinput />
+  <Calendar />
 )
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
