@@ -16,7 +16,7 @@
 						<ul>
 							<li><a href="index.html">Home</a></li>
 							<li><a href="generic.html">Generic</a></li>
-							<li><a href="#" class="button">Sign Up</a></li>
+							<li><a href="#" class="button" onClick="action()">Sign Up</a>
 						</ul>
 					</nav>
 				</header>
@@ -26,7 +26,7 @@
 					<h2>The Smart Calendar</h2>
 					<p>A program to combine all your calendars into one.</p>
 					<ul class="actions special">
-						<li><a href="#" class="button primary">Sign Up</a></li>
+						<li><a href="#" class="button" onClick="action()">Sign Up</a>
 						<li><a href="#" class="button">Learn More</a></li>
 					</ul>
 				</section>
@@ -113,6 +113,13 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script>
+				function action() {
+					// Define the actions you want to perform when the "Sign Up" button is clicked.
+					// For example, you can navigate to a signup page.
+					window.location.href = "login.html"; // Replace with the actual URL of your signup page.
+				}
+			</script>
 
 	</body>
 </html>

@@ -15,10 +15,18 @@ console.log("Hello world");
 //   </React.StrictMode>
 // );
 
-const loginButton = ReactDOM.createRoot(document.getElementById('mainbox'));
-loginButton.render(
-  <Calendar />
+const cal = ReactDOM.createRoot(document.getElementById('mainbox'));
+cal.render(
+  <Fileinput />
 )
+
+const loginButton = ReactDOM.createRoot(document.getElementById('signupbutton'));
+loginButton.render(
+  <SignInScreen />
+)
+
+
+
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
