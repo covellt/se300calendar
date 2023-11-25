@@ -16,7 +16,10 @@
 						<ul>
 							<li><a href="index.html">Home</a></li>
 							<li><a href="generic.html">Generic</a></li>
-							<li><a href="#" class="button">Sign Up</a></li>
+							<li><a href="#" class="button" onClick="action();">Sign Up</a>
+								<div id="signupbutton">
+								</div>
+							</li>
 						</ul>
 					</nav>
 				</header>
@@ -59,6 +62,18 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script>
+				var hidden = false;
+				function action() {
+					hidden = !hidden;
+					if(hidden) {
+						document.getElementById('signupbutton').style.visibility = 'hidden';
+					} else {
+						document.getElementById('signupbutton').style.visibility = 'visible';
+					}
+				}
+			</script>
+
 
 	</body>
 </html>

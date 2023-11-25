@@ -32,7 +32,7 @@ const uiConfig = {
   },
 };
 
-export default function() {
+export default function FirebaseUI() {
   const [isSignedIn, setIsSignedIn] = useState(false); // Local signed-in state.
 
   // Listen to the Firebase Auth state and set the local state.

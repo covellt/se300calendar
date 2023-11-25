@@ -1,6 +1,7 @@
 import * as FirebaseApp from "firebase/app";
 import * as Database from "firebase/database";
 import express from "express";
+import cors from "cors";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -18,15 +19,27 @@ const firebaseConfig = {
 const application = FirebaseApp.initializeApp(firebaseConfig);
 const data = Database.getDatabase(application);
 
+const app = express();
+app.use(cors());
+
 const PORT = process.env.PORT || 3001;
 
-const app = express();
+let test = { 
+  "success" : true, 
+  "events"    : [
+      { "id" : 1, 
+      "name" : "Batman" }
+]}
 
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from server!" });
+
+app.get("/load", (req, res) => {
+  res.json(test);
+});
+
+app.get("/sync", (req, res) => {
+  console.log(req);
 });
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
- app.put
