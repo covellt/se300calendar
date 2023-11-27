@@ -1,7 +1,9 @@
-import * as FirebaseApp from "firebase/app";
-import * as Database from "firebase/database";
 import express from "express";
-import cors from "cors";
+import admin from "firebase-admin";
+import serviceAccount from './se300-calendar-firebase-adminsdk-g9y5y-7b8763cddf.json' assert { type: 'json' };
+
+const app = express();
+const PORT = process.env.PORT || 3001;
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -16,29 +18,29 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const application = FirebaseApp.initializeApp(firebaseConfig);
-const data = Database.getDatabase(application);
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://se300-calendar-default-rtdb.firebaseio.com'
+})
 
-const app = express();
-app.use(cors());
+const db = admin.database();
 
-const PORT = process.env.PORT || 3001;
+app.get('/api/endpoint/:userid', (req, res) => {
+  const userId = req.params.userid;
+  const ref = db.ref(`users/${userId}`);
 
-let test = { 
-  "success" : true, 
-  "events"    : [
-      { "id" : 1, 
-      "name" : "Batman" }
-]}
-
-
-app.get("/load", (req, res) => {
-  res.json(test);
+  ref.once('value', (snapshot) => {
+    if (snapshot.exists()) {
+      res.json(snapshot.val());
+    } else {
+      res.status(404).send('No user data found');
+    }
+  }, (error) => {
+    console.error('Error getting data:', error);
+    res.status(500).send('Error getting data');
+  });
 });
 
-app.get("/sync", (req, res) => {
-  console.log(req);
-});
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
