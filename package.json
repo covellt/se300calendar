@@ -3,10 +3,21 @@
   "version": "1.0.0",
   "description": "Simple calendar and scheduler application",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"Build script wip\" && exit 1",
+    "start": "node server/index.js"
   },
+  "proxy": "http://localhost:3001",
   "author": "",
   "license": "ISC",
-  "type": "module"
+  "dependencies": {
+    "@bryntum/calendar": "npm:@bryntum/calendar-trial@^5.6.0",
+    "@bryntum/calendar-react": "^5.6.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "firebase-admin": "^11.11.1",
+    "react-firebaseui": "^6.0.0"
+  }
 }
