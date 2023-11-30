@@ -33,7 +33,32 @@ app.get('/api/endpoint/:userid', (req, res) => {
     if (snapshot.exists()) {
       res.json(snapshot.val());
     } else {
-      res.status(404).send('No user data found');
+      console.log(`Adding new user with userId: ${userId}`);
+      const data = {
+        events: {
+          event1: {
+            endDate: '2023-12-01T09:00:00',
+            name: 'My Event',
+            resourceId: 'r1',
+            startDate: '2023-12-01T08:00:00',
+          },
+        },
+        resources: {
+          resource1: {
+            color: "#FF0000",
+            id: 'r1',
+            name: 'My Calendar'
+          },
+        }
+      };
+      ref.set(data, (error) => {
+        if (error) {
+          console.error('Error writing data:', error);
+          res.status(500).send('Error writing data');
+        } else {
+          res.json(data);
+        }
+      });
     }
   }, (error) => {
     console.error('Error getting data:', error);
