@@ -1,15 +1,14 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './index.css';
 import reportWebVitals from './reportWebVitals.js';
 import Calendar from './cal.js';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-
-export const UserContext = createContext();
+import { AuthContext } from './context.js';
 
 export default function App() {
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const {isSignedIn, setIsSignedIn} = React.useContext(AuthContext);
   const [events, setEvents] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -69,18 +68,18 @@ export default function App() {
   
 
 
-  return(
-    <UserContext.Provider value={events}>
-
+  return (
+    <div>
       {!isSignedIn ? (
         <div>
           <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
         </div>
       ) : (
-        loading ? <div>Loading...</div> : <Calendar events={events} />
+        <div>
+          {loading ? <div>Loading...</div> : <Calendar events={events} />}
+        </div>
       )}
-
-    </UserContext.Provider>
+      </div>
   );
 }
 
