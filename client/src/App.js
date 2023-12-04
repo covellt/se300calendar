@@ -83,7 +83,7 @@ export default function App() {
       {!isSignedIn ? ( 
         <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
       ) : ( 
-        loading ? <div>Loading...</div> : <Calendar events={events} />
+        loading ? <div>Loading...</div> : <Calendar events={events} resources={resources} user={firebase.auth().currentUser.uid} />
       )}
     </div>
   );

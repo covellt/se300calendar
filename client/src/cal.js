@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EventStore, ResourceStore } from '@bryntum/calendar';
+import { EventStore, ResourceStore, FilePicker, Sidebar, Toast } from '@bryntum/calendar';
 import { BryntumCalendar } from '@bryntum/calendar-react';
 import '@bryntum/calendar/calendar.classic.css';
 
@@ -63,11 +63,62 @@ const Calendar = ({ events, resources, user }) => {
     }
   }
 
+  let fileField = new FilePicker({
+    fileFieldConfig : {
+      multiple : true,
+      accept : '.ics'
+    },
+    buttonConfig : {
+      text : 'Add Calendar(s)',
+      cls  : 'b-blue b-raised',
+      icon : 'b-fa b-fa-calendar-plus',
+      style: 'margin-right: .5em',
+      weight : 200
+    },
+    onChange: async function(userId) {
+      const file = this.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch (`/api/endpoint/${userId}`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        console.log('File uploaded successfully');
+        Toast.show('File uploaded successfully');
+      } else {
+        console.error('File upload failed');
+        Toast.show('File upload failed');
+      }
+    }
+  });
+
   return (
     <BryntumCalendar
+      resourceStores={resourceStore}
       eventStore={eventStore}
-      resourceStore={resourceStore}
-      sidebar={sidebar}
+      sidebar={{
+        items : {
+          fileField
+        }
+      }}
+      tbar={{
+        items : {
+          exportButton : {
+            type  : 'button',
+            text  : 'Export Events',
+            icon  : 'b-fa b-fa-file-export',
+            cls   : 'b-blue b-raised',
+            onAction() {
+              eventStore.export({
+                type : 'calendar',
+              });
+            }
+          }
+        }
+      }}
     />
   );
 };
