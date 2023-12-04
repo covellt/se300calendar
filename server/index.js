@@ -1,8 +1,10 @@
 import express from "express";
 import admin from "firebase-admin";
+import bodyParser from "body-parser";
 import serviceAccount from './se300-calendar-firebase-adminsdk-g9y5y-7b8763cddf.json' assert { type: 'json' };
 
 const app = express();
+app.use(bodyParser.json({ type: '*/*'}));
 const PORT = process.env.PORT || 3001;
 
 // Your web app's Firebase configuration
@@ -31,6 +33,7 @@ app.get('/api/endpoint/:userid', (req, res) => {
 
   ref.once('value', (snapshot) => {
     if (snapshot.exists()) {
+      console.log(snapshot.val())
       res.json(snapshot.val());
     } else {
       console.log(`Adding new user with userId: ${userId}`);
@@ -65,6 +68,31 @@ app.get('/api/endpoint/:userid', (req, res) => {
     res.status(500).send('Error getting data');
   });
 });
+
+app.post('/api/write/:userid/events', (req, res) => {
+  const userId = req.params.userid;
+  const ref = db.ref(`users/${userId}/events`);
+  console.log(req.body);
+  db.ref(`users/${userId}`).once('value', (snapshot) => {
+    if (snapshot.exists()) {
+      // User exists, write the event data
+      ref.set(req.body)
+        .then(() => {
+          // Data written successfully
+          res.sendStatus(200);
+        })
+        .catch((error) => {
+          // Error writing data
+          console.error(error);
+          res.status(500).send('Error writing data');
+        });
+    } else {
+      // User doesn't exist, handle gracefully
+      console.warn(`User with ID '${userId}' does not exist`);
+      res.status(404).send('User not found');
+    }
+  });
+})
 
 
 app.listen(PORT, () => {

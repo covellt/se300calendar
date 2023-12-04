@@ -10,6 +10,7 @@ import { AuthContext } from './context.js';
 export default function App() {
   const {isSignedIn, setIsSignedIn} = React.useContext(AuthContext);
   const [events, setEvents] = useState(null);
+  const [resources, setResources] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Configure Firebase.
@@ -53,7 +54,12 @@ export default function App() {
           })
           .then(fetchedData => {
             console.log('Raw data from backend:', fetchedData);
-            setEvents(Object.keys(fetchedData.events).map(eventId => ({...fetchedData.events[eventId], eventId})))
+            if (fetchedData.events) {
+              setEvents(Object.keys(fetchedData.events).map(eventId => ({...fetchedData.events[eventId], eventId})))
+            }
+            if (fetchedData.resources) {
+              setResources(Object.keys(fetchedData.resources).map(resourceId => ({...fetchedData.resources[resourceId], resourceId})))
+            }
             setLoading(false);
           })
           .catch(error => console.error(error));
@@ -65,21 +71,21 @@ export default function App() {
   useEffect(() => {
     console.log(events);
   }, [events]);
+
+  useEffect(() => {
+    console.log(resources);
+  }, [resources]);
   
 
 
-  return (
+  return(
     <div>
-      {!isSignedIn ? (
-        <div>
-          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
-        </div>
-      ) : (
-        <div>
-          {loading ? <div>Loading...</div> : <Calendar events={events} />}
-        </div>
+      {!isSignedIn ? ( 
+        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+      ) : ( 
+        loading ? <div>Loading...</div> : <Calendar events={events} />
       )}
-      </div>
+    </div>
   );
 }
 
