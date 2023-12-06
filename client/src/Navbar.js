@@ -29,7 +29,7 @@ const Navbar = () => {
 
     return (
         <ul>
-        <li>
+          {!isSignedIn ? (<li>
           <a href="#" className="button"
             onClick={(e) => { e.preventDefault(); handleSignOut(); }}
             style={{
@@ -44,8 +44,8 @@ const Navbar = () => {
           >
             Sign Out
           </a>
-        </li>
-        <li>
+        </li>) : (<div></div>)}
+        {!isSignedIn ? (<li>
           <a href="#" className="button"
             onClick={(e) => { e.preventDefault(); handleDeleteAccount(); }}
             style={{
@@ -61,7 +61,7 @@ const Navbar = () => {
           >
             Delete Account
           </a>
-        </li>
+        </li>) : (<div></div>)}
       </ul>
     )
 }

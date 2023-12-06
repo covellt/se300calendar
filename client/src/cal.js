@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EventStore, ResourceStore, FilePicker, Toast, Button } from '@bryntum/calendar';
+import { EventStore, ResourceStore, FilePicker, Toast, Button, Popup, Combo } from '@bryntum/calendar';
 import { BryntumCalendar } from '@bryntum/calendar-react';
 import ical from 'ical.js';
 import { saveAs } from 'file-saver';
@@ -133,29 +133,7 @@ const Calendar = ({ events, resources, user }) => {
           }
         }
       },
-      resourceFilter : {
-        itemTpl : ( record ) => {
-          const button = new Button({
-            icon : 'b-fa-cog b-fa-fw',
-            cls : 'b-rounded b-transparent',
-            menuIcon : false,
-            weight: 800,
-            alignSelf: 'flex-end',
-            menu : {
-              items : [
-                {
-                  text : 'Edit Resource',
-                  onItem : () => console.log("clicked"),
-                }
-              ]
-            },
-          });
-          return `<div class="list-item" style="width: 100%; display: flex; justify-content: space-between;">
-            ${record.name}
-            ${button.element.outerHTML}
-          </div>`;
-        },
-      },
+    
       addCalendarButton : {
         type : 'button',
         icon : 'b-fa b-fa-calendar-plus',
@@ -167,12 +145,56 @@ const Calendar = ({ events, resources, user }) => {
         icon: 'b-fa b-fa-edit',
         text: 'Edit Resources',
         weight: 200,
-        onClick: () => {eventStore.add();console.log('success')}
+        onClick  : function(e) {
+          const popup = new Popup({
+              header      : 'Edit Resources',
+              autoShow    : false,
+              centered    : true,
+              closable    : true,
+              closeAction : 'destroy',
+              width       : '20em',
+              minHeight   : '18em',
+              bbar        : {
+                  items : {
+                      cancel : {
+                          text     : 'Cancel',
+                          minWidth : 100,
+                          onAction : 'up.close'
+                      },
+                      close : {
+                          text     : 'OK',
+                          minWidth : 100,
+                          cls      : 'b-raised b-blue',
+                          onAction : () => {
+                            // selectedResource.setName(popup.widgetMap.nameField.value);
+                            // selectedResource.setColor(popup.widgetMap.colorField.value);
+                            // resourceStore.sync(); // Save changes to server (if applicable)
+                            // Toast.show("Resource updated successfully.");
+                            // popup.close();
+                          }
+                      }
+                  }
+              },
+              items : {
+                  combo : {
+                    label : 'Select a Resource',
+                    type : 'combo',
+                    store : resourceStore,
+                    displayField : 'name',
+                  },
+                  textField : {
+                    text : 'resource name',
+                  },
+                  colorField : {
+                    field : 'color',
+                  }
+              }
+          });
+          popup.show();
+      }
       }
     }
   };
-  
-
   
 
   return (
