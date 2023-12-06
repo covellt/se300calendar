@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
-import { EventStore, ResourceStore, FilePicker, Sidebar, Toast } from '@bryntum/calendar';
+import { EventStore, ResourceStore, FilePicker, Toast, Button } from '@bryntum/calendar';
 import { BryntumCalendar } from '@bryntum/calendar-react';
 import ical from 'ical.js';
 import { saveAs } from 'file-saver';
 
 
 const Calendar = ({ events, resources, user }) => {
-  const [eventStore, setEventStore] = useState(new EventStore({
-    data: events,
-  }));
-  const [resourceStore, setResourceStore] = useState(new ResourceStore({
-    data: resources,
-  }));
+  const eventStore = new EventStore({ data: events });
+  const resourceStore = new ResourceStore({ data: resources });
 
   const downloadICS = () => {
     var comp = new ical.Component(['vcalendar', [], []]);
@@ -33,7 +29,6 @@ const Calendar = ({ events, resources, user }) => {
     }
     comp.addSubcomponent(vevent);
     }
-    console.log(comp.toString());
     const icsString = comp.toString();
     const blob = new Blob([icsString], { type: 'text/calendar' });
     window.URL.createObjectURL(blob);
@@ -82,75 +77,118 @@ const Calendar = ({ events, resources, user }) => {
         cache: 'no-cache',})
     }
   });
-
-  // const sidebar = {
-  //   items : {
-  //     addCalendarButton : {
-  //       type : 'button',
-  //       icon : 'b-fa b-fa-calendar-plus',
-  //       text : 'Add Calendar',
-  //       weight : 200,
-  //     },
-  //     editResourcesButton : {
-  //       type: 'button',
-  //       icon: 'b-fa b-fa-edit',
-  //       text: 'Edit Resources',
-  //       weight: 200,
-  //       // onClick: resourceEdit(dummyRecord),
-  //     }
-  //   }
-  // }
-
-  let fileField = new FilePicker({
+  
+  const fileField = new FilePicker({
     fileFieldConfig : {
       multiple : true,
       accept : '.ics'
     },
     buttonConfig : {
-      text : 'Add Calendar(s)',
-      cls  : 'b-blue b-raised',
-      icon : 'b-fa b-fa-calendar-plus',
-      style: 'margin-right: .5em',
+      cls  : 'b-blue',
+      text: '',
+      icon : 'b-fa b-fa-upload',
       weight : 200
     },
     onChange: async function(userId) {
       const file = this.files[0];
-      const formData = new FormData();
-      formData.append('file', file);
-
-      // const response = await fetch (`/api/endpoint/${userId}`, {
-      //   method: 'POST',
-      //   body: formData
-      // });
-
-      // if (response.ok) {
-      //   console.log('File uploaded successfully');
-      //   Toast.show('File uploaded successfully');
-      // } else {
-      //   console.error('File upload failed');
-      //   Toast.show('File upload failed');
-      // }
+      await file.text().then(function(fileContent) {
+        console.log(fileContent);
+        console.log(ical.parse(fileContent));
+        const iCalComponent = new ical.Component(ical.parse(fileContent));
+        console.log(iCalComponent);
+        const subcomponents = iCalComponent.getAllSubcomponents();
+        const events = []
+        for (const sub of subcomponents) {
+          const event = new ical.Event(sub);
+          console.log(event);
+          events.push({
+            startDate: event.startDate.toString(),
+            endDate: event.endDate.toString(),
+            name: event.summary,
+            recurrenceRule: event.rrule,
+            id: event.uid
+          });
+        }
+        console.log(eventStore);
+        console.log(events);
+        eventStore.add(events);
+        Toast.show('Upload Success');
+      }).catch((error) => {
+        console.error(error);
+        Toast.show('Invalid file type');
+        
+      });
+      
     }
   });
+
+
+  const sidebar = {
+    items: {
+      datePicker : {
+        tbar : {
+          items: {
+            prevYear : false,
+            nextYear : false
+          }
+        }
+      },
+      resourceFilter : {
+        itemTpl : ( record ) => {
+          const button = new Button({
+            icon : 'b-fa-cog b-fa-fw',
+            cls : 'b-rounded b-transparent',
+            menuIcon : false,
+            weight: 800,
+            alignSelf: 'flex-end',
+            menu : {
+              items : [
+                {
+                  text : 'Edit Resource',
+                  onItem : () => console.log("clicked"),
+                }
+              ]
+            },
+          });
+          return `<div class="list-item" style="width: 100%; display: flex; justify-content: space-between;">
+            ${record.name}
+            ${button.element.outerHTML}
+          </div>`;
+        },
+      },
+      addCalendarButton : {
+        type : 'button',
+        icon : 'b-fa b-fa-calendar-plus',
+        text : 'Add Calendar',
+        weight : 200,
+      },
+      editResourcesButton : {
+        type: 'button',
+        icon: 'b-fa b-fa-edit',
+        text: 'Edit Resources',
+        weight: 200,
+        onClick: () => {eventStore.add();console.log('success')}
+      }
+    }
+  };
+  
+
+  
 
   return (
     <BryntumCalendar
       resourceStore={resourceStore}
       eventStore={eventStore}
-      // sidebar={{
-      //   items : {
-      //     fileField
-      //   }
-      // }}
+      sidebar={sidebar}
       tbar={{
         items : {
+          fileField,
           exportButton : {
-            type  : 'button',
-            text  : 'Export Events',
-            icon  : 'b-fa b-fa-file-export',
-            cls   : 'b-blue b-raised',
+            type: 'button',
+            icon: 'b-fa b-fa-download',
+            cls: 'b-blue',
             onAction() {
-             downloadICS();
+              downloadICS();
             }
           }
         }

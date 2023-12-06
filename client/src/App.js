@@ -6,7 +6,7 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import { AuthContext } from './context.js';
-import '@bryntum/calendar/calendar.classic.css';
+import '@bryntum/calendar/calendar.classic-light.css';
 
 export default function App() {
   const {isSignedIn, setIsSignedIn} = React.useContext(AuthContext);
