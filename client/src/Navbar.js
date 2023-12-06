@@ -4,7 +4,15 @@ import 'firebase/compat/auth';
 import { AuthContext } from './context.js';
 
 const Navbar = () => {
-    const {isSignedIn, setIsSignedIn} = React.useContext(AuthContext);
+    const {isSignedIn, setIsSignedIn} = useContext(AuthContext);
+
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            setIsSignedIn(true);
+        } else {
+            setIsSignedIn(false);
+        }
+    });
 
     // Function to handle sign-out
     const handleSignOut = () => {
@@ -27,43 +35,47 @@ const Navbar = () => {
     }
   };
 
-    return (
-        <ul>
-          {!isSignedIn ? (<li>
-          <a href="#" className="button"
-            onClick={(e) => { e.preventDefault(); handleSignOut(); }}
-            style={{
-              borderColor: '#737373',
-              backgroundColor: '#595959',
-              color: '#ffffff', // Text color
-              padding: '0px 16px', // Padding for better appearance
-              textDecoration: 'none', // Remove underline
-              borderRadius: '4px', // Rounded corners
-              display: 'inline-block', // Inline block for proper spacing
-            }}
-          >
-            Sign Out
-          </a>
-        </li>) : (<div></div>)}
-        {!isSignedIn ? (<li>
-          <a href="#" className="button"
-            onClick={(e) => { e.preventDefault(); handleDeleteAccount(); }}
-            style={{
-              borderColor: '#737373',
-              backgroundColor: '#595959',
-              color: '#ffffff', // Text color
-              padding: '0px 16px', // Padding for better appearance
-              textDecoration: 'none', // Remove underline
-              borderRadius: '4px', // Rounded corners
-              display: 'inline-block', // Inline block for proper spacing
-              marginTop: '10px' // Add margin-top for separation
-            }}
-          >
-            Delete Account
-          </a>
-        </li>) : (<div></div>)}
-      </ul>
-    )
+  return (
+    <ul>
+      {isSignedIn ? (
+        <>
+          <li>
+            <a href="#" className="button"
+              onClick={(e) => { e.preventDefault(); handleSignOut(); }}
+              style={{
+                borderColor: '#737373',
+                backgroundColor: '#595959',
+                color: '#ffffff', // Text color
+                padding: '0px 16px', // Padding for better appearance
+                textDecoration: 'none', // Remove underline
+                borderRadius: '4px', // Rounded corners
+                display: 'inline-block', // Inline block for proper spacing
+              }}
+            >
+              Sign Out
+            </a>
+          </li>
+          <li>
+            <a href="#" className="button"
+              onClick={(e) => { e.preventDefault(); handleDeleteAccount(); }}
+              style={{
+                borderColor: '#737373',
+                backgroundColor: '#595959',
+                color: '#ffffff', // Text color
+                padding: '0px 16px', // Padding for better appearance
+                textDecoration: 'none', // Remove underline
+                borderRadius: '4px', // Rounded corners
+                display: 'inline-block', // Inline block for proper spacing
+                marginTop: '10px' // Add margin-top for separation
+              }}
+            >
+              Delete Account
+            </a>
+          </li>
+        </>
+      ) : null }
+    </ul>
+  );
 }
 
 export default Navbar;

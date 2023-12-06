@@ -38,14 +38,7 @@ app.get('/api/endpoint/:userid', (req, res) => {
     } else {
       console.log(`Adding new user with userId: ${userId}`);
       const data = {
-        events: {
-          event1: {
-            endDate: '2023-12-01T09:00:00',
-            name: 'My Event',
-            resourceId: 'r1',
-            startDate: '2023-12-01T08:00:00',
-          },
-        },
+        events: {},
         resources: {
           resource1: {
             color: "#FF0000",
@@ -98,34 +91,3 @@ app.post('/api/write/:userid/events', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
-
-const upload = multer({ 
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 5 * 1024 * 1024,
-  } ,
-});
-
-app.post('/api/endpoint/:userid', upload.single('file') , (req, res) => {
-  const file = req.file;
-
-  //Perform file validation here
-
-  // Save the file to the db
-
-  let userId = req.params.userid;
-
-  const fileData = file.buffer.toString('base64');
-
-  userId = userId.replace(/[.$\[\]]/g, '');
-
-  console.log(userId);
-  const ref = db.ref(`users/${userId}/icsFiles`);
-  ref.push({
-      name: file.originalname,
-      data: fileData
-  });
-
-  res.send('File uploaded successfully');
-})
-
