@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EventStore, ResourceStore, FilePicker, Toast, Button, Popup, Combo } from '@bryntum/calendar';
+import { EventStore, ResourceStore, FilePicker, Toast, Popup } from '@bryntum/calendar';
 import { BryntumCalendar } from '@bryntum/calendar-react';
 import ical from 'ical.js';
 import { saveAs } from 'file-saver';
@@ -35,14 +35,10 @@ const Calendar = ({ events, resources, user }) => {
     saveAs(blob, 'events.ics');
   }
 
-  function handleChange(records) {
-    // console.log(records.map((record) => record.data));
-    // console.log('All events:', eventStore.records.map((record) => record.data));
-    // console.log(eventStore.json);
+  function handleEventChange() {
     const repackagedData = {};
     for (const event of eventStore.records) {
       const eventData = Object.assign({}, event.data);
-      // console.log(eventData);
       const eventId = eventData.id;
       repackagedData[eventId] = eventData;
       delete repackagedData[eventId].id;
@@ -57,25 +53,40 @@ const Calendar = ({ events, resources, user }) => {
     }
   }
 
-  eventStore.on('add', function({ records }) {
-    handleChange(records);
+  eventStore.on('add', function() {
+    handleEventChange();
   });
-  eventStore.on('remove', function({ records }) {
-    handleChange(records);
+  eventStore.on('remove', function() {
+    handleEventChange();
   });
-  eventStore.on('update', function({ records }) {
-    handleChange(records);
+  eventStore.on('update', function() {
+    handleEventChange();
   });
 
-  resourceStore.on('change', function ({ records }) {
-    console.log(records.map((record) => record.data));
-    console.log('All resources:', resourceStore.records.map((record) => record.data));
+  function handleResourceChange() {
     if (user) {
+      const repackagedData = {};
+      for (const resource of resourceStore.records) {
+        const resourceData = Object.assign({}, resource.data);
+        const resourceId = resourceData.id;
+        repackagedData[resourceId] = resourceData;
+        delete repackagedData[resourceId].id;
+      }
       fetch(`/api/write/${user}/resources`, {
         method: 'POST',
-        body: resourceStore.json,
+        body: JSON.stringify(repackagedData),
         cache: 'no-cache',})
     }
+  }
+
+  resourceStore.on('add', function () {
+    handleResourceChange();
+  });
+  resourceStore.on('remove', function () {
+    handleResourceChange();
+  });
+  resourceStore.on('update', function () {
+    handleResourceChange();
   });
   
   const fileField = new FilePicker({
@@ -139,15 +150,9 @@ const Calendar = ({ events, resources, user }) => {
         icon : 'b-fa b-fa-calendar-plus',
         text : 'Add Calendar',
         weight : 200,
-      },
-      editResourcesButton : {
-        type: 'button',
-        icon: 'b-fa b-fa-edit',
-        text: 'Edit Resources',
-        weight: 200,
         onClick  : function(e) {
           const popup = new Popup({
-              header      : 'Edit Resources',
+              header      : 'Add Resource',
               autoShow    : false,
               centered    : true,
               closable    : true,
@@ -166,29 +171,127 @@ const Calendar = ({ events, resources, user }) => {
                           minWidth : 100,
                           cls      : 'b-raised b-blue',
                           onAction : () => {
-                            // selectedResource.setName(popup.widgetMap.nameField.value);
-                            // selectedResource.setColor(popup.widgetMap.colorField.value);
-                            // resourceStore.sync(); // Save changes to server (if applicable)
-                            // Toast.show("Resource updated successfully.");
-                            // popup.close();
+                            const newRecord = {
+                              eventColor: popup.widgetMap.colorField.value,
+                              name: popup.widgetMap.nameField.value,
+                            }
+                            resourceStore.add(newRecord);
+                            console.log(resourceStore);
+                            console.log(eventStore);
+                            popup.close();
                           }
                       }
                   }
               },
-              items : {
-                  combo : {
+              items : [
+                  {
+                    label: "Name",
+                    type: "textfield",
+                    ref: "nameField",
+                  },
+                  {
+                    label: "Color",
+                    type: "colorField",
+                    ref: "colorField",
+                  },
+                ],
+          });
+          popup.show();
+      }
+      },
+      editResourcesButton : {
+        type: 'button',
+        icon: 'b-fa b-fa-edit',
+        text: 'Edit Resources',
+        weight: 200,
+        onClick  : function(e) {
+          const popup = new Popup({
+              header      : 'Edit Resources',
+              autoShow    : false,
+              centered    : true,
+              closable    : true,
+              closeAction : 'destroy',
+              width       : '20em',
+              minHeight   : '18em',
+              bbar        : {
+                  items : {
+                    delete: {
+                      text: "Delete",
+                      minWidth: 100,
+                      cls: "b-raised b-red",
+                      onAction: () => {
+                        const selectedResource = popup.widgetMap.combo.record;
+                        if (!selectedResource) {
+                          Toast.show("Please select a resource to delete.");
+                          return;
+                        }
+
+                        resourceStore.remove(selectedResource);
+                        Toast.show("Resource deleted successfully.");
+                        popup.close();
+                      },
+                    },
+                      cancel : {
+                          text     : 'Cancel',
+                          minWidth : 100,
+                          onAction : 'up.close'
+                      },
+                      close : {
+                          text     : 'OK',
+                          minWidth : 100,
+                          cls      : 'b-raised b-blue',
+                          onAction : () => {
+                            const selectedResource = popup.widgetMap.combo.record;
+                            if (selectedResource) {
+                              resourceStore.getById(selectedResource.id).set({
+                                eventColor: popup.widgetMap.colorField.value,
+                                name: popup.widgetMap.nameField.value,
+                              });
+                              console.log(selectedResource);
+                              console.log(resourceStore);
+                              Toast.show('saved');
+                            }
+                            popup.close();
+                          }
+                      }
+                  }
+              },
+              items : [
+                  {
                     label : 'Select a Resource',
                     type : 'combo',
+                    ref : 'combo',
                     store : resourceStore,
                     displayField : 'name',
+                    listeners: {
+                      // Update text and color fields when selection changes
+                      change: () => {
+                        const selectedResource = popup.widgetMap.combo.record;
+                        popup.widgetMap.nameField.hidden = !selectedResource;
+                        popup.widgetMap.colorField.hidden = !selectedResource;
+                        if (!selectedResource) {
+                          popup.widgetMap.nameField.setValue("empty");
+                          popup.widgetMap.colorField.setValue("");
+                        } else {
+                          popup.widgetMap.nameField.setValue(selectedResource.name);
+                          popup.widgetMap.colorField.setValue(selectedResource.eventColor);
+                        }
+                      },
+                    },
                   },
-                  textField : {
-                    text : 'resource name',
+                  {
+                    label: "Name",
+                    type: "textfield",
+                    ref: "nameField",
+                    hidden: true,
                   },
-                  colorField : {
-                    field : 'color',
-                  }
-              }
+                  {
+                    label: "Color",
+                    type: "colorField",
+                    ref: "colorField",
+                    hidden: true,
+                  },
+                ],
           });
           popup.show();
       }

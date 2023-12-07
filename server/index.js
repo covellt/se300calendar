@@ -2,7 +2,6 @@ import express from "express";
 import admin from "firebase-admin";
 import bodyParser from "body-parser";
 import serviceAccount from './se300-calendar-firebase-adminsdk-g9y5y-7b8763cddf.json' assert { type: 'json' };
-import multer from 'multer';
 
 const app = express();
 app.use(bodyParser.json({ type: '*/*'}));
@@ -95,37 +94,27 @@ app.post('/api/write/:userid/events', (req, res) => {
   });
 })
 
+app.post('/api/write/:userid/resources', (req, res) => {
+  const userId = req.params.userid;
+  const ref = db.ref(`users/${userId}/resources`);
+  console.log(req.body);
+  db.ref(`users/${userId}`).once('value', (snapshot) => {
+    if (snapshot.exists()) {
+      ref.set(req.body)
+        .then(() => {
+          res.sendStatus(200);
+        })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).send('Error writing data');
+        });
+    } else {
+      console.warn(`User with ID '${userId}' does not exist`);
+      res.status(404).send('User not found');
+    }
+  });
+})
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
-
-const upload = multer({ 
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 5 * 1024 * 1024,
-  } ,
-});
-
-app.post('/api/endpoint/:userid', upload.single('file') , (req, res) => {
-  const file = req.file;
-
-  //Perform file validation here
-
-  // Save the file to the db
-
-  let userId = req.params.userid;
-
-  const fileData = file.buffer.toString('base64');
-
-  userId = userId.replace(/[.$\[\]]/g, '');
-
-  console.log(userId);
-  const ref = db.ref(`users/${userId}/icsFiles`);
-  ref.push({
-      name: file.originalname,
-      data: fileData
-  });
-
-  res.send('File uploaded successfully');
-})
-
