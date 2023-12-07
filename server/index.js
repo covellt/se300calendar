@@ -68,7 +68,6 @@ app.get('/api/endpoint/:userid', (req, res) => {
   });
 });
 
-
 app.post('/api/write/:userid/events', (req, res) => {
   const userId = req.params.userid;
   const ref = db.ref(`users/${userId}/events`);
