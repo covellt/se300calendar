@@ -1,16 +1,17 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './index.css';
 import reportWebVitals from './reportWebVitals.js';
 import Calendar from './cal.js';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth.js';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
-
-export const UserContext = createContext();
+import { AuthContext } from './context.js';
+import '@bryntum/calendar/calendar.classic-light.css';
 
 export default function App() {
-  const [isSignedIn, setIsSignedIn] = useState(false);
+  const {isSignedIn, setIsSignedIn} = React.useContext(AuthContext);
   const [events, setEvents] = useState(null);
+  const [resources, setResources] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Configure Firebase.
@@ -54,7 +55,12 @@ export default function App() {
           })
           .then(fetchedData => {
             console.log('Raw data from backend:', fetchedData);
-            setEvents(Object.keys(fetchedData.events).map(eventId => ({...fetchedData.events[eventId], eventId})))
+            if (fetchedData.events) {
+              setEvents(Object.keys(fetchedData.events).map(eventId => ({...fetchedData.events[eventId], eventId})))
+            }
+            if (fetchedData.resources) {
+              setResources(Object.keys(fetchedData.resources).map(resourceId => ({...fetchedData.resources[resourceId], resourceId})))
+            }
             setLoading(false);
           })
           .catch(error => console.error(error));
@@ -66,21 +72,21 @@ export default function App() {
   useEffect(() => {
     console.log(events);
   }, [events]);
+
+  useEffect(() => {
+    console.log(resources);
+  }, [resources]);
   
 
 
   return(
-    <UserContext.Provider value={events}>
-
-      {!isSignedIn ? (
-        <div>
-          <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
-        </div>
-      ) : (
-        loading ? <div>Loading...</div> : <Calendar events={events} />
+    <div>
+      {!isSignedIn ? ( 
+        <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+      ) : ( 
+        loading ? <div>Loading...</div> : <Calendar events={events} resources={resources} user={firebase.auth().currentUser.uid} />
       )}
-
-    </UserContext.Provider>
+    </div>
   );
 }
 

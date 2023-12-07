@@ -15,9 +15,14 @@
   "dependencies": {
     "@bryntum/calendar": "npm:@bryntum/calendar-trial@^5.6.0",
     "@bryntum/calendar-react": "^5.6.0",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "file-saver": "^2.0.5",
     "firebase-admin": "^11.11.1",
-    "react-firebaseui": "^6.0.0"
+    "ical.js": "^1.5.0",
+    "multer": "^1.4.5-lts.1",
+    "react-firebaseui": "^6.0.0",
+    "rrule": "^2.8.1"
   }
 }
